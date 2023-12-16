@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useUserStateContext } from '../state/UserState';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Outlet } from 'react-router-dom';
 
-const GameList = () => {
+const UserProtectedRoutes = () => {
     const { loginData } = useUserStateContext();
     const navigate = useNavigate();
 
@@ -12,11 +12,7 @@ const GameList = () => {
         }
     }, [loginData, navigate]);
 
-    return (
-        <>
-            <h2>Game List</h2>
-        </>
-    );
+    return <Outlet />;
 };
 
-export default GameList;
+export default UserProtectedRoutes;

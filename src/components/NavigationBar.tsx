@@ -1,36 +1,52 @@
-import { NavLink } from 'react-router-dom';
+import { logOut } from '../data/user-requests';
 import { useUserStateContext } from '../state/UserState';
+import NavigationButton from './NavigationButton';
+import { useNavigate } from 'react-router-dom';
 
 const NavigationBar = () => {
-    const { isLoggedIn, setIsLoggedIn } = useUserStateContext();
+    const { loginData, setLoginData } = useUserStateContext();
+    const navigate = useNavigate();
 
     return (
-        <nav>
-            <ul>
+        <nav className="flex justify-between">
+            <ul className="flex gap-4">
                 <li>
-                    <NavLink
-                        to="/game-list"
-                        className={({ isActive }) =>
-                            isActive ? 'text-violet-800' : ''
-                        }
-                    >
+                    <NavigationButton destination="/game-list">
                         Game List
-                    </NavLink>
+                    </NavigationButton>
                 </li>
                 <li>
-                    <NavLink
-                        to="/player-ranking"
-                        className={({ isActive }) =>
-                            isActive ? 'text-violet-800' : ''
-                        }
-                    >
+                    <NavigationButton destination="/player-ranking">
                         Player Ranking
-                    </NavLink>
+                    </NavigationButton>
                 </li>
             </ul>
-            <button onClick={() => setIsLoggedIn(!isLoggedIn)}>
-                {isLoggedIn ? 'Log Out' : 'Log In'}
-            </button>
+
+            {!loginData ? (
+                <ul className="flex gap-4">
+                    <li>
+                        <NavigationButton destination="/login">
+                            Log In
+                        </NavigationButton>
+                    </li>
+                    <li>
+                        <NavigationButton destination="/register">
+                            Register
+                        </NavigationButton>
+                    </li>
+                </ul>
+            ) : (
+                <button
+                    className="w-[100px]"
+                    onClick={() => {
+                        logOut(loginData.token);
+                        setLoginData(undefined);
+                        navigate('/login');
+                    }}
+                >
+                    Log Out
+                </button>
+            )}
         </nav>
     );
 };

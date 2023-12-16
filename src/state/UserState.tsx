@@ -1,8 +1,9 @@
 import { PropsWithChildren, createContext, useContext, useState } from 'react';
+import { UserLoginData } from '../models/user';
 
 export interface UserState {
-    isLoggedIn: boolean;
-    setIsLoggedIn: (isLoggedIn: boolean) => void;
+    loginData?: UserLoginData;
+    setLoginData: (loginData?: UserLoginData) => void;
 }
 
 export const UserStateContext = createContext<UserState | undefined>(undefined);
@@ -19,10 +20,10 @@ export const useUserStateContext = () => {
 };
 
 export const UserStateProvider = ({ children }: PropsWithChildren) => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [loginData, setLoginData] = useState<UserLoginData | undefined>();
 
     return (
-        <UserStateContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
+        <UserStateContext.Provider value={{ loginData, setLoginData }}>
             {children}
         </UserStateContext.Provider>
     );
