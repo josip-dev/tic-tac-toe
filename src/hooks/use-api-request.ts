@@ -35,7 +35,7 @@ const useApiRequest = <T = undefined>(
                 },
             };
 
-            if (body) {
+            if (method !== ApiMethod.Get && body) {
                 requestData.body = JSON.stringify(body);
             }
 
