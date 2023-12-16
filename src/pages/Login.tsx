@@ -1,22 +1,20 @@
+/* eslint-disable react-refresh/only-export-components */
 import { FormEvent, useState } from 'react';
-import { logIn } from '../data/user-requests';
 import InputField from '../components/InputField';
 import NavigationButton from '../components/NavigationButton';
-import { useUserStateContext } from '../state/UserState';
-import { useNavigate } from 'react-router-dom';
+import withLogin, {
+    LoginProps as HocLoginProps,
+} from '../components/higher-order/with-login';
 
-const Login = () => {
-    const { setLoginData } = useUserStateContext();
-    const navigate = useNavigate();
+interface LoginProps extends HocLoginProps {}
 
+const Login = ({ logIn }: LoginProps) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
     const onSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        const loginData = await logIn(username, password);
-        setLoginData(loginData);
-        navigate('/');
+        await logIn(username, password);
     };
 
     const usernameError =
@@ -65,4 +63,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default withLogin(Login);

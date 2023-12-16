@@ -1,4 +1,5 @@
-import { logOut } from '../data/user-requests';
+import { ApiMethod } from '../constants/api-method';
+import useApiRequest from '../hooks/use-api-request';
 import { useUserStateContext } from '../state/UserState';
 import NavigationButton from './NavigationButton';
 import { useNavigate } from 'react-router-dom';
@@ -6,6 +7,10 @@ import { useNavigate } from 'react-router-dom';
 const NavigationBar = () => {
     const { loginData, setLoginData } = useUserStateContext();
     const navigate = useNavigate();
+    const { performApiRequest: logOut } = useApiRequest(
+        'logout',
+        ApiMethod.Post
+    );
 
     return (
         <nav className="flex justify-between">
@@ -38,8 +43,8 @@ const NavigationBar = () => {
             ) : (
                 <button
                     className="w-[100px]"
-                    onClick={() => {
-                        logOut(loginData.token);
+                    onClick={async () => {
+                        await logOut();
                         setLoginData(undefined);
                         navigate('/login');
                     }}

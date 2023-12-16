@@ -1,16 +1,29 @@
+/* eslint-disable react-refresh/only-export-components */
 import { FormEvent, useState } from 'react';
-import { register } from '../data/user-requests';
 import InputField from '../components/InputField';
 import NavigationButton from '../components/NavigationButton';
+import useApiRequest from '../hooks/use-api-request';
+import { ApiMethod } from '../constants/api-method';
+import withLogin, { LoginProps } from '../components/higher-order/with-login';
 
-const Register = () => {
+interface RegisterProps extends LoginProps {}
+
+const Register = ({ logIn }: RegisterProps) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
+    const { performApiRequest: register } = useApiRequest(
+        'register',
+        ApiMethod.Post
+    );
 
     const onSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        await register(username, password);
+        await register({
+            username,
+            password,
+        });
+        await logIn(username, password);
     };
 
     const usernameError =
@@ -79,4 +92,4 @@ const Register = () => {
     );
 };
 
-export default Register;
+export default withLogin(Register);
