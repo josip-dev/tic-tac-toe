@@ -1,9 +1,11 @@
-import { PropsWithChildren, createContext, useContext, useState } from 'react';
+import { PropsWithChildren, createContext, useContext } from 'react';
 import { StorageKey } from '../constants/storage-key';
+import { usePersistedState } from '../hooks/use-persisted-state';
+import { UserLoginData } from '../models/user';
 
 export interface UserState {
-    isLoggedIn: boolean;
-    setIsLoggedIn: (isLoggedIn: boolean) => void;
+    user?: UserLoginData;
+    setUser: React.Dispatch<React.SetStateAction<UserLoginData | undefined>>;
 }
 
 export const UserStateContext = createContext<UserState | undefined>(undefined);
@@ -20,12 +22,10 @@ export const useUserStateContext = () => {
 };
 
 export const UserStateProvider = ({ children }: PropsWithChildren) => {
-    const [isLoggedIn, setIsLoggedIn] = useState(
-        !!localStorage.getItem(StorageKey.Token)
-    );
+    const [user, setUser] = usePersistedState<UserLoginData>(StorageKey.User);
 
     return (
-        <UserStateContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
+        <UserStateContext.Provider value={{ user, setUser }}>
             {children}
         </UserStateContext.Provider>
     );

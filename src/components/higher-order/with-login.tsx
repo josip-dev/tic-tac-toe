@@ -4,7 +4,6 @@ import useApiRequest from '../../hooks/use-api-request';
 import { UserLoginData } from '../../models/user';
 import { useUserStateContext } from '../../state/UserState';
 import { useNavigate } from 'react-router-dom';
-import { StorageKey } from '../../constants/storage-key';
 
 export interface LoginProps {
     logIn: (
@@ -15,7 +14,7 @@ export interface LoginProps {
 
 const withLogin = <T extends LoginProps>(Component: ComponentType<T>) => {
     const WrappedComponent: React.FC<Omit<T, 'logIn'>> = (props) => {
-        const { setIsLoggedIn } = useUserStateContext();
+        const { setUser } = useUserStateContext();
         const { performApiRequest: logIn } = useApiRequest<UserLoginData>(
             'login',
             ApiMethod.Post
@@ -28,8 +27,7 @@ const withLogin = <T extends LoginProps>(Component: ComponentType<T>) => {
                 logIn={async (username, password) => {
                     const loginData = await logIn({ username, password });
                     if (loginData) {
-                        setIsLoggedIn(true);
-                        localStorage.setItem(StorageKey.Token, loginData.token);
+                        setUser(loginData);
                         navigate('/');
                         return loginData;
                     }

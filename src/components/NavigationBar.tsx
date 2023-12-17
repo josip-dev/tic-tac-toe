@@ -1,5 +1,4 @@
 import { ApiMethod } from '../constants/api-method';
-import { StorageKey } from '../constants/storage-key';
 import useApiRequest from '../hooks/use-api-request';
 import { useUserStateContext } from '../state/UserState';
 import Button from './Button';
@@ -7,7 +6,7 @@ import NavigationButton from './NavigationButton';
 import { useNavigate } from 'react-router-dom';
 
 const NavigationBar = () => {
-    const { isLoggedIn, setIsLoggedIn } = useUserStateContext();
+    const { user, setUser } = useUserStateContext();
     const navigate = useNavigate();
     const { performApiRequest: logOut } = useApiRequest(
         'logout',
@@ -29,7 +28,7 @@ const NavigationBar = () => {
                 </li>
             </ul>
 
-            {!isLoggedIn ? (
+            {!user ? (
                 <ul className="flex gap-4">
                     <li>
                         <NavigationButton destination="/login">
@@ -47,8 +46,7 @@ const NavigationBar = () => {
                     secondary
                     onClick={async () => {
                         await logOut();
-                        setIsLoggedIn(false);
-                        localStorage.removeItem(StorageKey.Token);
+                        setUser(undefined);
                         navigate('/login');
                     }}
                 >
