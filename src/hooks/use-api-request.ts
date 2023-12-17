@@ -14,7 +14,7 @@ const useApiRequest = <T = undefined>(
     const { loginData } = useUserStateContext();
 
     const performApiRequest = async (
-        body?: unknown
+        payload?: unknown
     ): Promise<T | undefined> => {
         setLoading(true);
         setError(undefined);
@@ -24,6 +24,7 @@ const useApiRequest = <T = undefined>(
                 route.endsWith('/') ? route : `${route}/`,
                 API_BASE_ROUTE
             );
+            let endpoint = url.toString();
 
             const requestData: RequestInit = {
                 method,
@@ -35,11 +36,33 @@ const useApiRequest = <T = undefined>(
                 },
             };
 
-            if (method !== ApiMethod.Get && body) {
-                requestData.body = JSON.stringify(body);
+            if (payload) {
+                switch (method) {
+                    case ApiMethod.Get: {
+                        if (typeof payload !== 'object') {
+                            break;
+                        }
+
+                        const parameters: Record<string, string> = {};
+
+                        for (const parameterName in payload) {
+                            const value = (payload as Record<string, unknown>)[
+                                parameterName
+                            ];
+                            parameters[parameterName] = String(value);
+                        }
+                        const queryParameters = new URLSearchParams(parameters);
+                        endpoint += `?${queryParameters}`;
+                        break;
+                    }
+
+                    default:
+                        requestData.body = JSON.stringify(payload);
+                        break;
+                }
             }
 
-            const response = await fetch(url, requestData);
+            const response = await fetch(endpoint, requestData);
 
             if (!response.ok) {
                 throw new Error(
