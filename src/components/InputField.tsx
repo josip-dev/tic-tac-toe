@@ -1,5 +1,6 @@
 import { OptionHTMLAttributes, useState } from 'react';
 import { GameStatus } from '../constants/game-status';
+import Error from './Error';
 
 export interface InputFieldProps {
     id?: string;
@@ -79,9 +80,7 @@ const InputField = ({
                 />
             )}
 
-            {isDirty && error && (
-                <p className="text-red-500 text-sm italic mt-2">{error}</p>
-            )}
+            {isDirty && <Error error={error} classes="mt-1" />}
         </div>
     );
 };

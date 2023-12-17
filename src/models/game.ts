@@ -4,7 +4,7 @@ import { GameStatus } from '../constants/game-status';
 
 export interface Game {
     id: number;
-    board: number[][];
+    board: Array<Array<number | undefined>>;
     winner: User;
     first_player: User;
     second_player: User;

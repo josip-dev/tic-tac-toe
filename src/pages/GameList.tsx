@@ -13,14 +13,22 @@ import {
 import { IconChartBar, IconEye, IconPlayerPlay } from '@tabler/icons-react';
 import Button from '../components/Button';
 import InputField from '../components/InputField';
+import { useUserStateContext } from '../state/UserState';
+import { useNavigate } from 'react-router-dom';
+import { ApiMethod } from '../constants/api-method';
 
 const GAME_FETCH_LIMIT = 10;
 
 const GameList = () => {
     const { gameFetchOffset, setGameFetchOffset } = useTablesStateContext();
+    const { user } = useUserStateContext();
     const { performApiRequest: fetchGames, data: games } =
         useApiRequest<PaginatedResponse<Game>>('games');
-
+    const { performApiRequest: createNewGame } = useApiRequest<Game>(
+        'games',
+        ApiMethod.Post
+    );
+    const navigate = useNavigate();
     const [statusFilter, setStatusFilter] = useState<GameStatus | undefined>();
 
     useEffect(() => {
@@ -31,6 +39,22 @@ const GameList = () => {
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [gameFetchOffset, statusFilter]);
+
+    if (!user) {
+        return null;
+    }
+
+    const startNewGame = async () => {
+        const gameData = await createNewGame();
+        if (!gameData) {
+            return;
+        }
+        loadGame(gameData.id);
+    };
+
+    const loadGame = (gameId: number, showStatistics = false) => {
+        navigate(`/game/${gameId}${showStatistics ? '?statistics=1' : ''}`);
+    };
 
     return (
         <>
@@ -54,7 +78,9 @@ const GameList = () => {
                     }
                 />
 
-                <Button className="w-auto h-fit">Start New Game</Button>
+                <Button className="w-auto h-fit" onClick={startNewGame}>
+                    Start New Game
+                </Button>
             </div>
 
             <Table
@@ -69,10 +95,16 @@ const GameList = () => {
                             <div className="flex gap-2">
                                 <span className="font-semibold">
                                     {first_player.username}
+                                    {first_player.id === user.id && (
+                                        <span className="font-lg">(You)</span>
+                                    )}
                                 </span>
                                 <span>VS</span>
                                 <span className="font-semibold">
                                     {second_player.username}
+                                    {second_player.id === user.id && (
+                                        <span className="font-lg">(You)</span>
+                                    )}
                                 </span>
                             </div>
                         ),
@@ -87,27 +119,40 @@ const GameList = () => {
                     },
                     {
                         header: 'Actions',
-                        render: ({ status }) => (
+                        render: ({
+                            id,
+                            status,
+                            first_player,
+                            second_player,
+                        }) => (
                             <div className="flex items-center gap-2">
                                 {status === GameStatus.Finished ? (
                                     <Button
                                         icon={<IconChartBar />}
                                         title="View Statistics"
+                                        onClick={() => loadGame(id, true)}
                                     />
                                 ) : (
                                     <div className="flex items-center gap-2">
-                                        <Button
-                                            icon={<IconPlayerPlay />}
-                                            title={
-                                                status === GameStatus.InProgress
-                                                    ? 'Resume'
-                                                    : 'Play'
-                                            }
-                                        />
+                                        {(status === GameStatus.Open ||
+                                            first_player.id === user.id ||
+                                            second_player.id === user.id) && (
+                                            <Button
+                                                icon={<IconPlayerPlay />}
+                                                title={
+                                                    status ===
+                                                    GameStatus.InProgress
+                                                        ? 'Resume'
+                                                        : 'Play'
+                                                }
+                                                onClick={() => loadGame(id)}
+                                            />
+                                        )}
 
                                         <Button
                                             icon={<IconEye />}
                                             title="Spectate"
+                                            onClick={() => loadGame(id)}
                                         />
                                     </div>
                                 )}

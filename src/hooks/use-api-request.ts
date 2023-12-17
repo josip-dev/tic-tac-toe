@@ -9,7 +9,7 @@ const useApiRequest = <T = undefined>(
     method: ApiMethod = ApiMethod.Get
 ) => {
     const [data, setData] = useState<T | undefined>();
-    const [error, setError] = useState<Error | undefined>();
+    const [error, setError] = useState<string | undefined>();
     const [loading, setLoading] = useState(false);
     const { user } = useUserStateContext();
 
@@ -68,20 +68,35 @@ const useApiRequest = <T = undefined>(
             const response = await fetch(endpoint, requestData);
 
             if (!response.ok) {
-                throw new Error(
-                    `API request failed: ${response.status} - ${response.statusText}`
-                );
+                try {
+                    const text = await response.text();
+                    const {
+                        errors,
+                    }: {
+                        errors: [
+                            { path: string; code: string; message: string }
+                        ];
+                    } = JSON.parse(text);
+                    setError(errors.map((error) => error.message).join(', '));
+                } catch {
+                    setError(
+                        `API request failed: ${response.status} - ${response.statusText}`
+                    );
+                }
             }
-
             // 204: no content
-            if (response.status !== 204) {
+            else if (response.status !== 204) {
                 const responseData = await response.json();
                 const dataCastToT = responseData as T;
                 setData(dataCastToT);
                 return dataCastToT;
             }
         } catch (error) {
-            setError(error as Error);
+            if (error instanceof Error) {
+                setError(error.message);
+            } else {
+                setError(String(error));
+            }
         } finally {
             setLoading(false);
         }

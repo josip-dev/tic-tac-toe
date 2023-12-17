@@ -5,6 +5,7 @@ import {
     Navigate,
 } from 'react-router-dom';
 import NavigationBar from './components/NavigationBar';
+import Game from './pages/Game';
 import GameList from './pages/GameList';
 import PlayerRanking from './pages/PlayerRanking';
 import NotFound from './pages/NotFound';
@@ -23,6 +24,7 @@ const App = () => {
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
                         <Route element={<UserProtectedRoutes />}>
+                            <Route path="/game/:gameId" element={<Game />} />
                             <Route path="/game-list" element={<GameList />} />
                             <Route
                                 path="/player-ranking"
