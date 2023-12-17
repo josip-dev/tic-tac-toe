@@ -49,6 +49,9 @@ const useApiRequest = <T = undefined>(
                             const value = (payload as Record<string, unknown>)[
                                 parameterName
                             ];
+                            if (!value) {
+                                continue;
+                            }
                             parameters[parameterName] = String(value);
                         }
                         const queryParameters = new URLSearchParams(parameters);

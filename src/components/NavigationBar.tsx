@@ -2,6 +2,7 @@ import { ApiMethod } from '../constants/api-method';
 import { StorageKey } from '../constants/storage-key';
 import useApiRequest from '../hooks/use-api-request';
 import { useUserStateContext } from '../state/UserState';
+import Button from './Button';
 import NavigationButton from './NavigationButton';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,7 +15,7 @@ const NavigationBar = () => {
     );
 
     return (
-        <nav className="flex justify-between mb-2">
+        <nav className="flex justify-between items-center mb-3">
             <ul className="flex gap-4">
                 <li>
                     <NavigationButton destination="/game-list">
@@ -42,8 +43,8 @@ const NavigationBar = () => {
                     </li>
                 </ul>
             ) : (
-                <button
-                    className="w-[100px]"
+                <Button
+                    secondary
                     onClick={async () => {
                         await logOut();
                         setIsLoggedIn(false);
@@ -52,7 +53,7 @@ const NavigationBar = () => {
                     }}
                 >
                     Log Out
-                </button>
+                </Button>
             )}
         </nav>
     );

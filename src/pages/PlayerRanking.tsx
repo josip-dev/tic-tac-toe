@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import useApiRequest from '../hooks/use-api-request';
 import { PaginatedResponse } from '../models/paginated-response';
-import { User } from '../models/user';
+import { UserData } from '../models/user';
 import Table from '../components/Table';
 import { useTablesStateContext } from '../state/TablesState';
 
@@ -10,7 +10,7 @@ const USER_FETCH_LIMIT = 10;
 const PlayerRanking = () => {
     const { userFetchOffset, setUserFetchOffset } = useTablesStateContext();
     const { performApiRequest: fetchUsers, data: users } =
-        useApiRequest<PaginatedResponse<User>>('users');
+        useApiRequest<PaginatedResponse<UserData>>('users');
 
     useEffect(() => {
         fetchUsers({
@@ -43,10 +43,11 @@ const PlayerRanking = () => {
                     {
                         header: 'Win Rate',
                         property: 'win_rate',
+                        render: (user) =>
+                            `${Math.round(user.win_rate * 10000) / 100}%`,
                     },
                 ]}
                 keySelector={(user) => user.id}
-                itemDisplay={(user, column) => user[column]}
             />
         </>
     );

@@ -1,8 +1,10 @@
 import { PaginatedResponse } from '../models/paginated-response';
+import Button from './Button';
 
 export interface TableColumn<T> {
     header: string;
-    property: keyof T;
+    property?: keyof T;
+    render?: (item: T) => React.ReactNode;
 }
 
 export interface TableProps<T> {
@@ -12,8 +14,26 @@ export interface TableProps<T> {
     setDataOffset: (offset: number) => void;
     columns: TableColumn<T>[];
     keySelector: (item: T) => React.Key;
-    itemDisplay: (item: T, column: keyof T) => React.ReactNode;
 }
+
+const getColumnKey = <T,>(column: TableColumn<T>) => {
+    return column.property?.toString() || column.header;
+};
+
+const renderColumn = <T,>(column: TableColumn<T>, item: T) => {
+    if (column.render) {
+        return column.render(item);
+    }
+
+    if (!column.property) {
+        return JSON.stringify(item);
+    }
+
+    const propertyValue = item[column.property];
+    return typeof propertyValue === 'object'
+        ? JSON.stringify(propertyValue)
+        : String(propertyValue);
+};
 
 const Table = <T,>({
     data,
@@ -22,7 +42,6 @@ const Table = <T,>({
     setDataOffset,
     columns,
     keySelector,
-    itemDisplay,
 }: TableProps<T>) => {
     const numberOfPages = Math.ceil((data?.count || 0) / itemsPerPage);
     const currentPage = dataOffset / itemsPerPage + 1;
@@ -34,7 +53,7 @@ const Table = <T,>({
                     <tr>
                         {columns.map((column) => (
                             <th
-                                key={column.property.toString()}
+                                key={getColumnKey(column)}
                                 className="border border-cyan-300 dark:border-cyan-600 font-semibold p-4 text-cyan-900 dark:text-cyan-200 text-left"
                             >
                                 {column.header}
@@ -44,60 +63,65 @@ const Table = <T,>({
                 </thead>
                 <tbody>
                     {data && data.results.length > 0 ? (
-                        data.results.map((item) => (
-                            <tr key={keySelector(item)}>
-                                {columns.map((column) => (
-                                    <td
-                                        key={`item.${keySelector(
-                                            item
-                                        )}.${column.property.toString()}`}
-                                        className="border border-cyan-300 dark:border-cyan-700 p-4 text-cyan-500 dark:text-cyan-400"
-                                    >
-                                        {itemDisplay(item, column.property)}
-                                    </td>
-                                ))}
-                            </tr>
-                        ))
+                        data.results.map((item) => {
+                            return (
+                                <tr key={keySelector(item)}>
+                                    {columns.map((column) => (
+                                        <td
+                                            key={`item.${keySelector(
+                                                item
+                                            )}.${getColumnKey(column)}`}
+                                            className="border border-cyan-300 dark:border-cyan-700 p-4 text-cyan-500 dark:text-cyan-400"
+                                        >
+                                            {renderColumn(column, item)}
+                                        </td>
+                                    ))}
+                                </tr>
+                            );
+                        })
                     ) : (
                         <tr>
-                            <td
-                                colSpan={columns.length}
-                                className="flex justify-center items-center"
-                            >
-                                <div>No data</div>
+                            <td colSpan={columns.length}>
+                                <div className="flex justify-center items-center p-5">
+                                    <div className="text-white">No data</div>
+                                </div>
                             </td>
                         </tr>
                     )}
                 </tbody>
             </table>
 
-            <div className="m-4 flex justify-between items-center">
-                <div>
+            {data?.count ? (
+                <div className="m-4 flex justify-between items-center">
                     <div>Total: {data?.count}</div>
-                </div>
 
-                <div className="gap-4 flex items-center">
-                    <button
-                        className="w-auto"
-                        onClick={() => setDataOffset(dataOffset - itemsPerPage)}
-                        disabled={!data?.previous}
-                    >
-                        Previous
-                    </button>
+                    <div className="gap-4 flex items-center">
+                        <Button
+                            className="w-auto"
+                            onClick={() =>
+                                setDataOffset(dataOffset - itemsPerPage)
+                            }
+                            disabled={!data?.previous}
+                        >
+                            Previous
+                        </Button>
 
-                    <div>
-                        Page {currentPage} / {numberOfPages}
+                        <div>
+                            Page {currentPage} / {numberOfPages}
+                        </div>
+
+                        <Button
+                            className="w-auto"
+                            onClick={() =>
+                                setDataOffset(dataOffset + itemsPerPage)
+                            }
+                            disabled={!data?.next}
+                        >
+                            Next
+                        </Button>
                     </div>
-
-                    <button
-                        className="w-auto"
-                        onClick={() => setDataOffset(dataOffset + itemsPerPage)}
-                        disabled={!data?.next}
-                    >
-                        Next
-                    </button>
                 </div>
-            </div>
+            ) : null}
         </div>
     );
 };

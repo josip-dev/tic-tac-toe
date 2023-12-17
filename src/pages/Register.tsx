@@ -5,6 +5,7 @@ import NavigationButton from '../components/NavigationButton';
 import useApiRequest from '../hooks/use-api-request';
 import { ApiMethod } from '../constants/api-method';
 import withLogin, { LoginProps } from '../components/higher-order/with-login';
+import Button from '../components/Button';
 
 interface RegisterProps extends LoginProps {}
 
@@ -70,16 +71,17 @@ const Register = ({ logIn }: RegisterProps) => {
                     value={passwordConfirmation}
                     setValue={setPasswordConfirmation}
                 />
-                <button
+                <Button
                     type="submit"
                     disabled={
                         !!usernameError ||
                         !!passwordError ||
                         !!passwordConfirmationError
                     }
+                    fullWidth
                 >
                     Register
-                </button>
+                </Button>
                 <p className="mt-2">
                     Already have an account?{' '}
                     <NavigationButton destination="/login">

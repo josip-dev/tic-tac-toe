@@ -7,6 +7,9 @@ export interface UserLoginData {
 export interface User {
     id: number;
     username: string;
+}
+
+export interface UserData extends User {
     game_count: number;
     win_rate: number;
 }

@@ -5,6 +5,7 @@ import NavigationButton from '../components/NavigationButton';
 import withLogin, {
     LoginProps as HocLoginProps,
 } from '../components/higher-order/with-login';
+import Button from '../components/Button';
 
 interface LoginProps extends HocLoginProps {}
 
@@ -45,12 +46,13 @@ const Login = ({ logIn }: LoginProps) => {
                     value={password}
                     setValue={setPassword}
                 />
-                <button
+                <Button
                     type="submit"
                     disabled={!!usernameError || !!passwordError}
+                    fullWidth
                 >
                     Log In
-                </button>
+                </Button>
                 <p className="mt-2">
                     Don't have an account?{' '}
                     <NavigationButton destination="/register">
