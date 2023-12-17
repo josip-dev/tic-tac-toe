@@ -1,9 +1,9 @@
 import { PropsWithChildren, createContext, useContext, useState } from 'react';
-import { UserLoginData } from '../models/user';
+import { StorageKey } from '../constants/storage-key';
 
 export interface UserState {
-    loginData?: UserLoginData;
-    setLoginData: (loginData?: UserLoginData) => void;
+    isLoggedIn: boolean;
+    setIsLoggedIn: (isLoggedIn: boolean) => void;
 }
 
 export const UserStateContext = createContext<UserState | undefined>(undefined);
@@ -20,10 +20,12 @@ export const useUserStateContext = () => {
 };
 
 export const UserStateProvider = ({ children }: PropsWithChildren) => {
-    const [loginData, setLoginData] = useState<UserLoginData | undefined>();
+    const [isLoggedIn, setIsLoggedIn] = useState(
+        !!localStorage.getItem(StorageKey.Token)
+    );
 
     return (
-        <UserStateContext.Provider value={{ loginData, setLoginData }}>
+        <UserStateContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
             {children}
         </UserStateContext.Provider>
     );

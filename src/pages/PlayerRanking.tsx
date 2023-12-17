@@ -1,13 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import useApiRequest from '../hooks/use-api-request';
 import { PaginatedResponse } from '../models/paginated-response';
 import { User } from '../models/user';
 import Table from '../components/Table';
+import { useTablesStateContext } from '../state/TablesState';
 
 const USER_FETCH_LIMIT = 10;
 
 const PlayerRanking = () => {
-    const [userFetchOffset, setUserFetchOffset] = useState(0);
+    const { userFetchOffset, setUserFetchOffset } = useTablesStateContext();
     const { performApiRequest: fetchUsers, data: users } =
         useApiRequest<PaginatedResponse<User>>('users');
 

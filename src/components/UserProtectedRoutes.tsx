@@ -1,18 +1,19 @@
 import { useEffect } from 'react';
-import { useUserStateContext } from '../state/UserState';
-import { useNavigate, Outlet } from 'react-router-dom';
+import { useNavigate, useLocation, Outlet } from 'react-router-dom';
+import { StorageKey } from '../constants/storage-key';
 
 const UserProtectedRoutes = () => {
-    const { loginData } = useUserStateContext();
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
-        if (!loginData) {
+        const token = localStorage.getItem(StorageKey.Token);
+        if (!token) {
             navigate('/login');
         }
-    }, [loginData, navigate]);
+    }, [location, navigate]);
 
-    return <Outlet />;
+    return localStorage.getItem(StorageKey.Token) && <Outlet />;
 };
 
 export default UserProtectedRoutes;

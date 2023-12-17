@@ -35,7 +35,7 @@ const Table = <T,>({
                         {columns.map((column) => (
                             <th
                                 key={column.property.toString()}
-                                className="w-1/2 border border-cyan-300 dark:border-cyan-600 font-semibold p-4 text-cyan-900 dark:text-cyan-200 text-left"
+                                className="border border-cyan-300 dark:border-cyan-600 font-semibold p-4 text-cyan-900 dark:text-cyan-200 text-left"
                             >
                                 {column.header}
                             </th>
@@ -47,14 +47,26 @@ const Table = <T,>({
                         data.results.map((item) => (
                             <tr key={keySelector(item)}>
                                 {columns.map((column) => (
-                                    <td className="border border-cyan-300 dark:border-cyan-700 p-4 text-cyan-500 dark:text-cyan-400">
+                                    <td
+                                        key={`item.${keySelector(
+                                            item
+                                        )}.${column.property.toString()}`}
+                                        className="border border-cyan-300 dark:border-cyan-700 p-4 text-cyan-500 dark:text-cyan-400"
+                                    >
                                         {itemDisplay(item, column.property)}
                                     </td>
                                 ))}
                             </tr>
                         ))
                     ) : (
-                        <div>No data</div>
+                        <tr>
+                            <td
+                                colSpan={columns.length}
+                                className="flex justify-center items-center"
+                            >
+                                <div>No data</div>
+                            </td>
+                        </tr>
                     )}
                 </tbody>
             </table>

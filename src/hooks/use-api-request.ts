@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useUserStateContext } from '../state/UserState';
 import { ApiMethod } from '../constants/api-method';
+import { StorageKey } from '../constants/storage-key';
 
 const API_BASE_ROUTE = 'https://tictactoe.aboutdream.io';
 
@@ -11,13 +11,13 @@ const useApiRequest = <T = undefined>(
     const [data, setData] = useState<T | undefined>();
     const [error, setError] = useState<Error | undefined>();
     const [loading, setLoading] = useState(false);
-    const { loginData } = useUserStateContext();
 
     const performApiRequest = async (
         payload?: unknown
     ): Promise<T | undefined> => {
         setLoading(true);
         setError(undefined);
+        const token = localStorage.getItem(StorageKey.Token);
 
         try {
             const url = new URL(
@@ -30,8 +30,8 @@ const useApiRequest = <T = undefined>(
                 method,
                 headers: {
                     'Content-Type': 'application/json',
-                    ...(loginData?.token && {
-                        Authorization: `Bearer ${loginData.token}`,
+                    ...(token && {
+                        Authorization: `Bearer ${token}`,
                     }),
                 },
             };

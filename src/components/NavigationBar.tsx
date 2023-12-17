@@ -1,11 +1,12 @@
 import { ApiMethod } from '../constants/api-method';
+import { StorageKey } from '../constants/storage-key';
 import useApiRequest from '../hooks/use-api-request';
 import { useUserStateContext } from '../state/UserState';
 import NavigationButton from './NavigationButton';
 import { useNavigate } from 'react-router-dom';
 
 const NavigationBar = () => {
-    const { loginData, setLoginData } = useUserStateContext();
+    const { isLoggedIn, setIsLoggedIn } = useUserStateContext();
     const navigate = useNavigate();
     const { performApiRequest: logOut } = useApiRequest(
         'logout',
@@ -13,7 +14,7 @@ const NavigationBar = () => {
     );
 
     return (
-        <nav className="flex justify-between">
+        <nav className="flex justify-between mb-2">
             <ul className="flex gap-4">
                 <li>
                     <NavigationButton destination="/game-list">
@@ -27,7 +28,7 @@ const NavigationBar = () => {
                 </li>
             </ul>
 
-            {!loginData ? (
+            {!isLoggedIn ? (
                 <ul className="flex gap-4">
                     <li>
                         <NavigationButton destination="/login">
@@ -45,7 +46,8 @@ const NavigationBar = () => {
                     className="w-[100px]"
                     onClick={async () => {
                         await logOut();
-                        setLoginData(undefined);
+                        setIsLoggedIn(false);
+                        localStorage.removeItem(StorageKey.Token);
                         navigate('/login');
                     }}
                 >
