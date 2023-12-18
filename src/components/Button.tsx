@@ -23,7 +23,7 @@ const Button = ({
             className={cn(
                 secondary || icon
                     ? 'bg-transparent hover:bg-cyan-100 text-cyan-950 border border-cyan-900'
-                    : 'bg-cyan-300 text-cyan-900 border border-cyan-500 hover:bg-cyan-700 hover:text-cyan-100',
+                    : 'bg-cyan-50 text-cyan-900 border border-cyan-400 hover:bg-cyan-500 hover:text-cyan-50',
                 'py-2 rounded focus:ring-2 focus:outline-none focus:ring-cyan-400',
                 !icon
                     ? `font-medium px-4 text-center${

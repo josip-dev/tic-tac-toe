@@ -29,7 +29,7 @@ const InputField = ({
         <div className="mb-4">
             <label
                 htmlFor={id || name}
-                className="block text-cyan-700 text-md font-semibold mb-2"
+                className="block text-cyan-900 text-md font-bold mb-1"
             >
                 {label || name.toUpperCase()}
             </label>
@@ -46,7 +46,7 @@ const InputField = ({
 
                         setValue(value);
                     }}
-                    className="bg-cyan-300 text-cyan-900 border border-cyan-500 hover:bg-cyan-700 hover:text-cyan-100 text-md rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 disabled:opacity-30 disabled:pointer-events-none disabled:cursor-not-allowed"
+                    className="bg-cyan-50 text-cyan-900 border border-cyan-400 hover:bg-cyan-500 hover:text-cyan-50 text-md rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 disabled:opacity-30 disabled:pointer-events-none disabled:cursor-not-allowed"
                 >
                     {dropdownValues.map((dropdownValue) => (
                         <option
