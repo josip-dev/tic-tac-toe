@@ -42,16 +42,25 @@ const NavigationBar = () => {
                     </li>
                 </ul>
             ) : (
-                <Button
-                    secondary
-                    onClick={async () => {
-                        await logOut();
-                        setUser(undefined);
-                        navigate('/login');
-                    }}
-                >
-                    Log Out
-                </Button>
+                <div className="flex items-center gap-4">
+                    <div className="flex gap-1 items-center text-lg">
+                        <span>Welcome back,</span>
+
+                        <span className="font-semibold italic">
+                            {user.username}
+                        </span>
+                    </div>
+                    <Button
+                        secondary
+                        onClick={async () => {
+                            await logOut();
+                            setUser(undefined);
+                            navigate('/login');
+                        }}
+                    >
+                        Log Out
+                    </Button>
+                </div>
             )}
         </nav>
     );

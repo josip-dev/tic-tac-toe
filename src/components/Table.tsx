@@ -48,7 +48,7 @@ const Table = <T,>({
 
     return (
         <div>
-            <table className="table-fixed border-collapse w-full border border-cyan-400 dark:border-cyan-500 bg-white dark:bg-cyan-800 text-sm shadow-sm">
+            <table className="table-auto border-collapse w-full border border-cyan-400 dark:border-cyan-500 bg-white dark:bg-cyan-800 text-sm shadow-sm">
                 <thead className="bg-cyan-50 dark:bg-cyan-700">
                     <tr>
                         {columns.map((column) => (

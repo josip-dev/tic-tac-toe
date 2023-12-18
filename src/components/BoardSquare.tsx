@@ -47,7 +47,7 @@ const BoardSquare = ({
                 });
             }}
             className={cn(
-                `w-1/3 h-[${SIZE}px] p-2 shadow-md`,
+                `w-1/3 p-2 shadow-md hover:shadow-xl flex justify-center items-center`,
                 canActivate
                     ? 'hover:cursor-pointer'
                     : 'hover:cursor-not-allowed'

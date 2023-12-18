@@ -15,7 +15,7 @@ const BoardRow = ({
     makeMove,
 }: BoardRowProps) => {
     return (
-        <div className="flex gap-5 my-5">
+        <div className="flex gap-5 my-5 mx-auto w-[290px] min-h-[80px]">
             {row.map((value, index) => {
                 const sign = getBoardSign(value, firstPlayerId);
                 return (

@@ -16,6 +16,7 @@ import InputField from '../components/InputField';
 import { useUserStateContext } from '../state/UserState';
 import { useNavigate } from 'react-router-dom';
 import { ApiMethod } from '../constants/api-method';
+import ErrorMessage from '../components/ErrorMessage';
 
 const GAME_FETCH_LIMIT = 10;
 
@@ -28,6 +29,8 @@ const GameList = () => {
         'games',
         ApiMethod.Post
     );
+    const { performApiRequest: joinExistingGame, error: joinGameError } =
+        useApiRequest('games/{{gameId}}/join', ApiMethod.Post);
     const navigate = useNavigate();
     const [statusFilter, setStatusFilter] = useState<GameStatus | undefined>();
 
@@ -52,8 +55,15 @@ const GameList = () => {
         loadGame(gameData.id);
     };
 
-    const loadGame = (gameId: number, showStatistics = false) => {
-        navigate(`/game/${gameId}${showStatistics ? '?statistics=1' : ''}`);
+    const joinGame = async (gameId: number) => {
+        await joinExistingGame(undefined, {
+            gameId,
+        });
+        loadGame(gameId);
+    };
+
+    const loadGame = (gameId: number) => {
+        navigate(`/game/${gameId}`);
     };
 
     return (
@@ -61,6 +71,12 @@ const GameList = () => {
             <h2 className="text-3xl font-semibold text-cyan-950 mb-2">
                 Game List
             </h2>
+
+            <ErrorMessage
+                header="There was a problem trying to join a game"
+                error={joinGameError}
+                classes="mb-6"
+            />
 
             <div className="flex justify-between items-center mb-4">
                 <InputField
@@ -94,18 +110,36 @@ const GameList = () => {
                         render: ({ first_player, second_player }) => (
                             <div className="flex gap-2">
                                 <span className="font-semibold">
-                                    {first_player.username}
+                                    <span>{first_player.username}</span>
                                     {first_player.id === user.id && (
-                                        <span className="font-lg">(You)</span>
+                                        <span className="ml-1 font-lg">
+                                            (You)
+                                        </span>
                                     )}
                                 </span>
                                 <span>VS</span>
-                                <span className="font-semibold">
-                                    {second_player.username}
-                                    {second_player.id === user.id && (
-                                        <span className="font-lg">(You)</span>
-                                    )}
-                                </span>
+                                <div>
+                                    <span className="font-semibold">
+                                        {second_player ? (
+                                            <div>
+                                                <span>
+                                                    {second_player.username}
+                                                </span>
+                                                {second_player.id ===
+                                                    user.id && (
+                                                    <span className="ml-1 font-lg">
+                                                        (You)
+                                                    </span>
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <div>
+                                                &lt;Waiting for second
+                                                player...&gt;
+                                            </div>
+                                        )}
+                                    </span>
+                                </div>
                             </div>
                         ),
                     },
@@ -130,13 +164,13 @@ const GameList = () => {
                                     <Button
                                         icon={<IconChartBar />}
                                         title="View Statistics"
-                                        onClick={() => loadGame(id, true)}
+                                        onClick={() => loadGame(id)}
                                     />
                                 ) : (
                                     <div className="flex items-center gap-2">
                                         {(status === GameStatus.Open ||
                                             first_player.id === user.id ||
-                                            second_player.id === user.id) && (
+                                            second_player?.id === user.id) && (
                                             <Button
                                                 icon={<IconPlayerPlay />}
                                                 title={
@@ -145,7 +179,11 @@ const GameList = () => {
                                                         ? 'Resume'
                                                         : 'Play'
                                                 }
-                                                onClick={() => loadGame(id)}
+                                                onClick={() =>
+                                                    status === GameStatus.Open
+                                                        ? joinGame(id)
+                                                        : loadGame(id)
+                                                }
                                             />
                                         )}
 

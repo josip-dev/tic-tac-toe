@@ -14,17 +14,32 @@ const useApiRequest = <T = undefined>(
     const { user } = useUserStateContext();
 
     const performApiRequest = async (
-        payload?: unknown
+        payload?: unknown,
+        routeParameters?: Record<string, unknown>
     ): Promise<T | undefined> => {
         setLoading(true);
         setError(undefined);
 
         try {
-            const url = new URL(
-                route.endsWith('/') ? route : `${route}/`,
-                API_BASE_ROUTE
-            );
-            let endpoint = url.toString();
+            let endpoint = route.endsWith('/') ? route : `${route}/`;
+
+            if (routeParameters) {
+                Object.keys(routeParameters).forEach((routeParameterName) => {
+                    const routeParameterValue =
+                        routeParameters[routeParameterName];
+                    const valueAsString =
+                        typeof routeParameterValue === 'object'
+                            ? JSON.stringify(routeParameterValue)
+                            : String(routeParameterValue);
+                    const routeParameterTemplate = `{{${routeParameterName}}}`;
+                    endpoint = endpoint.replace(
+                        routeParameterTemplate,
+                        valueAsString
+                    );
+                });
+            }
+
+            let url = new URL(endpoint, API_BASE_ROUTE).toString();
 
             const requestData: RequestInit = {
                 method,
@@ -55,7 +70,7 @@ const useApiRequest = <T = undefined>(
                             parameters[parameterName] = String(value);
                         }
                         const queryParameters = new URLSearchParams(parameters);
-                        endpoint += `?${queryParameters}`;
+                        url += `?${queryParameters}`;
                         break;
                     }
 
@@ -65,7 +80,7 @@ const useApiRequest = <T = undefined>(
                 }
             }
 
-            const response = await fetch(endpoint, requestData);
+            const response = await fetch(url, requestData);
 
             if (!response.ok) {
                 try {
@@ -86,10 +101,12 @@ const useApiRequest = <T = undefined>(
             }
             // 204: no content
             else if (response.status !== 204) {
-                const responseData = await response.json();
-                const dataCastToT = responseData as T;
-                setData(dataCastToT);
-                return dataCastToT;
+                const responseText = await response.text();
+                if (responseText.length > 0) {
+                    const responseData = JSON.parse(responseText) as T;
+                    setData(responseData);
+                    return responseData;
+                }
             }
         } catch (error) {
             if (error instanceof Error) {

@@ -8,7 +8,13 @@ export interface ErrorProps extends PropsWithChildren {
     handled?: boolean;
 }
 
-const Error = ({ header, error, classes, handled, children }: ErrorProps) => {
+const ErrorMessage = ({
+    header,
+    error,
+    classes,
+    handled,
+    children,
+}: ErrorProps) => {
     return (
         error && (
             <div className={cn('flex flex-col gap-1', classes)}>
@@ -24,4 +30,4 @@ const Error = ({ header, error, classes, handled, children }: ErrorProps) => {
     );
 };
 
-export default Error;
+export default ErrorMessage;
