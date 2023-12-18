@@ -22,7 +22,7 @@ const PlayerRanking = () => {
 
     return (
         <>
-            <h2 className="text-3xl font-semibold text-cyan-950 mb-2">
+            <h2 className="text-3xl font-semibold text-cyan-800 mb-2">
                 Player Ranking
             </h2>
 

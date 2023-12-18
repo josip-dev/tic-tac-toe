@@ -1,3 +1,9 @@
+import {
+    IconChevronLeft,
+    IconChevronLeftPipe,
+    IconChevronRight,
+    IconChevronRightPipe,
+} from '@tabler/icons-react';
 import { PaginatedResponse } from '../models/paginated-response';
 import Button from './Button';
 
@@ -48,13 +54,13 @@ const Table = <T,>({
 
     return (
         <div>
-            <table className="table-auto border-collapse w-full border border-cyan-400 dark:border-cyan-500 bg-white dark:bg-cyan-800 text-sm shadow-sm">
-                <thead className="bg-cyan-50 dark:bg-cyan-700">
+            <table className="table-auto border-collapse w-full border border-cyan-400 bg-white text-sm shadow-sm">
+                <thead className="bg-cyan-50">
                     <tr>
                         {columns.map((column) => (
                             <th
                                 key={getColumnKey(column)}
-                                className="border border-cyan-300 dark:border-cyan-600 font-semibold p-4 text-cyan-900 dark:text-cyan-200 text-left"
+                                className="border border-cyan-300 font-semibold p-4 text-cyan-900 text-left"
                             >
                                 {column.header}
                             </th>
@@ -71,7 +77,7 @@ const Table = <T,>({
                                             key={`item.${keySelector(
                                                 item
                                             )}.${getColumnKey(column)}`}
-                                            className="border border-cyan-300 dark:border-cyan-700 p-4 text-cyan-500 dark:text-cyan-400"
+                                            className="border border-cyan-300 p-4 text-cyan-600"
                                         >
                                             {renderColumn(column, item)}
                                         </td>
@@ -83,7 +89,7 @@ const Table = <T,>({
                         <tr>
                             <td colSpan={columns.length}>
                                 <div className="flex justify-center items-center p-5">
-                                    <div className="text-white">No data</div>
+                                    <div className="text-cyan-600">No data</div>
                                 </div>
                             </td>
                         </tr>
@@ -97,28 +103,40 @@ const Table = <T,>({
 
                     <div className="gap-4 flex items-center">
                         <Button
-                            className="w-auto"
+                            onClick={() => setDataOffset(0)}
+                            disabled={!data?.previous}
+                            icon={<IconChevronLeftPipe />}
+                        />
+
+                        <Button
                             onClick={() =>
                                 setDataOffset(dataOffset - itemsPerPage)
                             }
                             disabled={!data?.previous}
-                        >
-                            Previous
-                        </Button>
+                            icon={<IconChevronLeft />}
+                        />
 
                         <div>
                             Page {currentPage} / {numberOfPages}
                         </div>
 
                         <Button
-                            className="w-auto"
                             onClick={() =>
                                 setDataOffset(dataOffset + itemsPerPage)
                             }
                             disabled={!data?.next}
-                        >
-                            Next
-                        </Button>
+                            icon={<IconChevronRight />}
+                        />
+
+                        <Button
+                            onClick={() =>
+                                setDataOffset(
+                                    (numberOfPages - 1) * itemsPerPage
+                                )
+                            }
+                            disabled={!data?.next}
+                            icon={<IconChevronRightPipe />}
+                        />
                     </div>
                 </div>
             ) : null}

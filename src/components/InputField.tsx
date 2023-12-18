@@ -29,7 +29,7 @@ const InputField = ({
         <div className="mb-4">
             <label
                 htmlFor={id || name}
-                className="block text-gray-700 text-md font-semibold mb-2"
+                className="block text-cyan-700 text-md font-semibold mb-2"
             >
                 {label || name.toUpperCase()}
             </label>
@@ -46,7 +46,7 @@ const InputField = ({
 
                         setValue(value);
                     }}
-                    className="py-3 px-4 pe-9 block w-full border-cyan-200 rounded-lg text-md focus:border-cyan-500 focus:ring-cyan-500 disabled:opacity-30 disabled:pointer-events-none disabled:cursor-not-allowed"
+                    className="bg-cyan-300 text-cyan-900 border border-cyan-500 hover:bg-cyan-700 hover:text-cyan-100 text-md rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 disabled:opacity-30 disabled:pointer-events-none disabled:cursor-not-allowed"
                 >
                     {dropdownValues.map((dropdownValue) => (
                         <option
@@ -76,7 +76,7 @@ const InputField = ({
 
                         setValue(value);
                     }}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-cyan-700 leading-tight focus:outline-none focus:shadow-outline"
                 />
             )}
 

@@ -12,8 +12,10 @@ const NavigationButton = ({ destination, children }: NavigationButtonProps) => {
             to={destination}
             className={({ isActive }) =>
                 cn(
-                    'text-lg text-cyan-500 hover:underline',
-                    isActive ? ' text-cyan-900' : ''
+                    'text-lg text-cyan-600 hover:underline',
+                    isActive
+                        ? ' text-cyan-900 border-b border-cyan-900 pb-1'
+                        : ''
                 )
             }
         >
